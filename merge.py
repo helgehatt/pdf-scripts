@@ -1,6 +1,6 @@
-import sys
-import os
 import glob
+import os
+import sys
 
 from PyPDF2 import PdfFileMerger
 
@@ -10,14 +10,12 @@ if __name__ == "__main__":
         raise Exception("Input argument 'filepath' is missing")
 
     filepath = sys.argv[1]
+    files = glob.glob(filepath)
+    files = list(sorted(files, key=len))
 
     merger = PdfFileMerger()
+    for f in files:
+        merger.append(f)
 
-    [merger.append(file) for file in glob.glob(filepath + "*")]
-
-    filepath = os.path.abspath(filepath + ".pdf")
-
-    if os.path.exists(filepath):
-        raise FileExistsError(filepath)
-
-    merger.write(filepath)
+    filename, ext = os.path.splitext(files[0])
+    merger.write(f"{filename} (merged){ext}")
